@@ -1,0 +1,361 @@
+import React, { useContext, useState } from 'react';
+import { Snackbar, IconButton, SnackbarContent } from '@material-ui/core';
+import CloseIcon from '@material-ui/icons/Close';
+import axios from 'axios';
+import isEmail from 'validator/lib/isEmail';
+import { makeStyles } from '@material-ui/core/styles';
+import {
+    FaSpotify,
+    FaInstagram,
+    FaYoutube,
+    FaTiktok,
+
+} from 'react-icons/fa';
+import { AiOutlineSend, AiOutlineCheckCircle } from 'react-icons/ai';
+
+
+import { ThemeContext } from '../../contexts/ThemeContext';
+
+import { socialsData } from '../../data/socialsData';
+import { contactsData } from '../../data/contactsData';
+import './Contacts.css';
+
+function Contacts() {
+
+    const [open, setOpen] = useState(false);
+    const [file, setFile] = useState(null);
+    const [name, setName] = useState('');
+    const [email, setEmail] = useState('');
+    const [phone, setPhone] = useState('');
+    const [message, setMessage] = useState('');
+
+    const [success, setSuccess] = useState(false);
+    const [errMsg, setErrMsg] = useState('');
+
+    const { theme } = useContext(ThemeContext);
+
+    const handleClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setOpen(false);
+    };
+
+    const useStyles = makeStyles((t) => ({
+        input: {
+            border: `4px solid ${theme.primary80}`,
+            backgroundColor: `${theme.secondary}`,
+            color: `${theme.tertiary}`,
+            fontFamily: 'var(--primaryFont)',
+            fontWeight: 500,
+            transition: 'border 0.2s ease-in-out',
+            '&:focus': {
+                border: `4px solid ${theme.primary600}`,
+            },
+        },
+        message: {
+            border: `4px solid ${theme.primary80}`,
+            backgroundColor: `${theme.secondary}`,
+            color: `${theme.tertiary}`,
+            fontFamily: 'var(--primaryFont)',
+            fontWeight: 500,
+            transition: 'border 0.2s ease-in-out',
+            '&:focus': {
+                border: `4px solid ${theme.primary600}`,
+            },
+        },
+        label: {
+            backgroundColor: `${theme.secondary}`,
+            color: `${theme.primary}`,
+            fontFamily: 'var(--primaryFont)',
+            fontWeight: 600,
+            fontSize: '0.9rem',
+            padding: '0 5px',
+            transform: 'translate(25px,50%)',
+            display: 'inline-flex',
+        },
+        socialIcon: {
+            width: '45px',
+            height: '45px',
+            borderRadius: '50%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '21px',
+            backgroundColor: theme.primary,
+            color: theme.secondary,
+            transition: '250ms ease-in-out',
+            '&:hover': {
+                transform: 'scale(1.1)',
+                color: theme.secondary,
+                backgroundColor: theme.tertiary,
+            },
+        },
+        detailsIcon: {
+            backgroundColor: theme.primary,
+            color: theme.secondary,
+            borderRadius: '50%',
+            width: '45px',
+            height: '45px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '23px',
+            transition: '250ms ease-in-out',
+            flexShrink: 0,
+            '&:hover': {
+                transform: 'scale(1.1)',
+                color: theme.secondary,
+                backgroundColor: theme.tertiary,
+            },
+        },
+        submitBtn: {
+            backgroundColor: theme.primary,
+            color: theme.secondary,
+            transition: '250ms ease-in-out',
+            '&:hover': {
+                transform: 'scale(1.08)',
+                color: theme.secondary,
+                backgroundColor: theme.tertiary,
+            },
+        },
+    }));
+
+    const classes = useStyles();
+
+    const handleContactForm = (e) => {
+        e.preventDefault();
+
+        if (name && email && phone && message) {
+            if (isEmail(email)) {
+                const formData = new FormData();
+                formData.append('name', name);
+                formData.append('email', email);
+                formData.append('phone', phone);
+                formData.append('message', message);
+                formData.append('anexo', file);
+
+                axios.post("http://localhost:9001/send", formData, {
+                    headers: {
+                        "Content-Type": `multipart/form-data; boundary=${formData._boundary}`,
+                    },
+                }).then((res) => {
+                    console.log(res);
+                    console.log('success');
+                    setSuccess(true);
+                    setErrMsg('');
+
+                    setName('');
+                    setEmail('');
+                    setPhone('');
+                    setMessage('');
+                    setFile(null);
+                    setOpen(false);
+                });
+            } else {
+                setErrMsg('Invalido');
+                setOpen(true);
+            }
+        } else {
+            setErrMsg('Entre com todas informações');
+            setOpen(true);
+        }
+    };
+
+    return (
+        <div
+            className='contacts'
+            id='contacts'
+            style={{ backgroundColor: theme.secondary }}
+        >
+            <div className='contacts--container'>
+                <h1 style={{ color: theme.primary }}>Contato</h1>
+                <div className='contacts-body'>
+                    <div className='contacts-form'>
+                        <form onSubmit={handleContactForm}>
+                            <div className='input-container'>
+                                <label htmlFor='Name' className={classes.label}>
+                                    Nome
+                                </label>
+                                <input
+                                    placeholder='John Doe'
+                                    value={name}
+                                    onChange={(e) => setName(e.target.value)}
+                                    type='text'
+                                    name='Name'
+                                    className={`form-input ${classes.input}`}
+                                />
+                            </div>
+                            <div className='input-container'>
+                                <label
+                                    htmlFor='Email'
+                                    className={classes.label}
+                                >
+                                    Email
+                                </label>
+                                <input
+                                    placeholder='John@doe.com'
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    type='email'
+                                    name='Email'
+                                    className={`form-input ${classes.input}`}
+                                />
+                            </div>
+                            <div className='input-container'>
+                                <label
+                                    htmlFor='Phone'
+                                    className={classes.label}
+                                >
+                                    Telefone
+                                </label>
+                                <input
+                                    placeholder='(XX) XXXXX-XXXX'
+                                    value={phone}
+                                    onChange={(e) => setPhone(e.target.value)}
+                                    type='tel'
+                                    name='Phone'
+                                    className={`form-input ${classes.input}`}
+                                />
+                            </div>
+                            <div className='input-container'>
+
+                                <input
+                                    type="file"
+                                    name="File"
+                                    onChange={(e) => setFile(e.target.files[0])}
+                                    className={`form-input ${classes.input}`}
+                                />
+                            </div>
+                            <div className='input-container'>
+                                <label
+                                    htmlFor='Message'
+                                    className={classes.label}
+                                >
+                                    Mensagem
+                                </label>
+                                <textarea
+                                    placeholder='Digite sua mensagem...'
+                                    value={message}
+                                    onChange={(e) => setMessage(e.target.value)}
+                                    type='text'
+                                    name='Message'
+                                    className={`form-message ${classes.message}`}
+                                />
+                            </div>
+
+                            <div className='submit-btn'>
+                                <button
+                                    type='submit'
+                                    className={classes.submitBtn}
+                                >
+                                    <p>{!success ? 'Enviar' : 'Enviado'}</p>
+                                    <div className='submit-icon'>
+                                        <AiOutlineSend
+                                            className='send-icon'
+                                            style={{
+                                                animation: !success
+                                                    ? 'initial'
+                                                    : 'fly 0.8s linear both',
+                                                position: success
+                                                    ? 'absolute'
+                                                    : 'initial',
+                                            }}
+                                        />
+                                        <AiOutlineCheckCircle
+                                            className='success-icon'
+                                            style={{
+                                                display: !success
+                                                    ? 'none'
+                                                    : 'inline-flex',
+                                                opacity: !success ? '0' : '1',
+                                            }}
+                                        />
+                                    </div>
+                                </button>
+                            </div>
+                        </form>
+                        <Snackbar
+                            anchorOrigin={{
+                                vertical: 'top',
+                                horizontal: 'center',
+                            }}
+                            open={open}
+                            autoHideDuration={4000}
+                            onClose={handleClose}
+                        >
+                            <SnackbarContent
+                                action={
+                                    <React.Fragment>
+                                        <IconButton
+                                            size='small'
+                                            aria-label='close'
+                                            color='inherit'
+                                            onClick={handleClose}
+                                        >
+                                            <CloseIcon fontSize='small' />
+                                        </IconButton>
+                                    </React.Fragment>
+                                }
+                                style={{
+                                    backgroundColor: theme.primary,
+                                    color: theme.secondary,
+                                    fontFamily: 'var(--primaryFont)',
+                                }}
+                                message={errMsg}
+                            />
+                        </Snackbar>
+                    </div>
+
+                    <div className='contacts-details'>
+                        <div className='socialmedia-icons'>
+                            {socialsData.instagram && (
+                                <a
+                                    href={socialsData.instagram}
+                                    target='_blank'
+                                    rel='noreferrer'
+                                    className={classes.socialIcon}
+                                >
+                                    <FaInstagram aria-label='Instagram' />
+                                </a>
+                            )}
+                            {socialsData.youtube && (
+                                <a
+                                    href={socialsData.youtube}
+                                    target='_blank'
+                                    rel='noreferrer'
+                                    className={classes.socialIcon}
+                                >
+                                    <FaYoutube aria-label='YouTube' />
+                                </a>
+                            )}
+                            {socialsData.tiktok && (
+                                <a
+                                    href={socialsData.tiktok}
+                                    target='_blank'
+                                    rel='noreferrer'
+                                    className={classes.socialIcon}
+                                >
+                                    <FaTiktok aria-label='tiktok' />
+                                </a>
+                            )}
+                            {socialsData.spotify && (
+                                <a
+                                    href={socialsData.spotify}
+                                    target='_blank'
+                                    rel='noreferrer'
+                                    className={classes.socialIcon}
+                                >
+                                    <FaSpotify aria-label='spotify' />
+                                </a>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}
+
+export default Contacts;

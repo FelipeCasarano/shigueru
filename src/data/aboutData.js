@@ -1,0 +1,6 @@
+export const aboutData = {
+    title: "Minha História ",
+    description1: "Meu nome é Wagner, e desde que me conheço, sempre gostei de música. Cresci ouvindo vários estilos e gêneros musicais, mas foi aos 16 anos, enquanto andava de skate, que descobri minha paixão pelo hip hop. Comecei a rimar com meus amigos e a compor minhas próprias músicas, mas não sabia por onde começar. Foi então que, aos 18 anos, decidi me arriscar e fui para o Japão em busca de trabalho. Enquanto estava no Japão, meus amigos no Brasil começaram a fazer música. Foi a partir daí que me interessei pelo mundo da produção musical. um amigo que já trabalhava na área explicou como era esse mundo e me ajudou a montar meu estúdio. Aos poucos, fui aprendendo sobre a produção musical, desde de fazer beat, gravação de voz,  mixagem e Masterização até a distribuição e divulgação das músicas.",
+    description2: "Desenvolvi um conhecimento muito bom em produção e comecei a produzir músicas para artistas locais. Hoje em dia, sou um produtor musical e tenho a felicidade de trabalhar com diversos artistas talentosos.",
+    image: 2
+}
